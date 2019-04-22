@@ -27,7 +27,7 @@ Email: sathwikgs97@gmail.com}
 \maketitle
 
 \begin{abstract}
-3D Audio is a generic name that encompasses ways to render audio like in reality and in particular its spatial dimension. To synthesize the 3D sound effects with a binaural recording system, Head-related transfer functions (HRTFs) were used describing the spectral behaviour of sounds coming from a particular direction. In this paper we implement a hardware design to realise the effect of 3D sound by efficient processing of time varying FIR filters and verify its functionality in real time using a FPGA.  
+3D Audio is a generic name that allows to render and recreate audio as experienced in reality, with spatial dimension being the main parameter. To synthesize the 3D sound effects with a binaural recording system, Head-related transfer functions (HRTFs) were used describing the spectral behaviour of sounds coming from a particular direction. In this paper we implement a hardware design to realise the effect of 3D sound by efficient processing of time varying FIR filters and verify its functionality in real time using a FPGA.  
 
 \end{abstract}
 
@@ -37,17 +37,17 @@ Binaural recording, HRTFs, 3D audio, Real time hardware design
 
 \section{Introduction}
 For many years now Binaural recording has been the most commonly used method to provide an immersive sound experience. The method involves using artificial or dummy heads plugged in with microphones to record and reproduce the same over headphones. But this type recording requires special equipment and is not as portable as any other two channel recording instrument. 
-HRTFs (Head related Transfer Function) describe how a sound from a specific point will arrive at the ear (generally at the outer end of the auditory canal). These impulse responses are typically recorded in an anechoic chamber to minimize the influence of early reflections and reverberation on the measured response. They are measured at small increments of θ such as 15$^{\circ}$ or 30$^{\circ}$ in the horizontal plane. The brain has learned these signature over time and when it hears a sound with a specific signature, it can find out its direction in its HRTF memory. A pair of HRTFs for two ears can be used to synthesize a binaural sound that seems to come from a particular point in space. In this paper we design an ASIC to synthesize sounds using HRTFs in real time and also test it by implementing on a FPGA.  
+HRTFs (Head related Transfer Function) describe how a sound from a specific point will arrive at the ear (generally at the outer end of the auditory canal). These impulse responses are typically recorded in an anechoic chamber to minimize the influence of early reflections and reverberation on the measured response. They are measured at small increments of θ such as 15$^{\circ}$ or 30$^{\circ}$ in the horizontal plane. The brain has learned these signature over time and when it hears a sound with a specific signature, it can find out the direction in its HRTF memory. A pair of HRTFs for two ears can be used to synthesize a binaural sound that seems to come from a particular point in space. In this paper we design an ASIC to synthesize sounds using HRTFs and also test it by implementing on a FPGA.  
 \newline
 
-Initially researchers were interested in localizing the sound source rather than reproducing it. Several methods have been proposed in different transfer domains to increase the computational speed of localizing. One of the most robust methods is the GCC (Generalised Cross Correlation) technique as discussed by Knapp and Carter \cite{two} where along with basic cross-correlation, a weighting function is applied to the power spectrum. Among different weighing functions, the most popular one called GCC-PHAT was introduced by Broeck and Bertrand \cite{one}. This weighing scheme was used to achieve unity gain on all frequency components with preservation of phases.  This was designed for locating only single sound source. However it was modified for more critical situations such as multiple sources, described in \cite{three}. The technology of surround sound systems was invented back in 1930s. During the early stages, audio engineers used a technique called amplitude panning, a method which allows audio sources like instruments to be placed in different positions to build up a sound scene utilising the panning law, or sometimes to place the source around a listener in the horizontal plane. The technique lacked reproduction of frequency information for different spatial positions. It was then important to understand the working of human ears particularly in the frequency domain. The basic concepts of 3D sound systems are explained in detail by Wenzel \cite{four}. Alongside development in recording technology and signal processing techniques, 3D reproduction of sound was then realized on the basis of HRTFs from source to the right and left ears as discussed by Chong-Jin and Gan \cite{six} and Wenzel \cite{four}. The  robustness  analysis,  localization  characteristics,  structural  model  for  binaural  sound  synthesis  and  head related transfer functions are discussed in detail by Brown and Duda \cite{seven}. All these methods help in reproduction of 3D sound using HRTFs, but not in real-time. There is no emphasis on efficient computation to achieve the same.  
+Initially researchers were interested in localizing the sound source rather than reproducing it. Several methods have been proposed in different transfer domains to increase the computational speed of localizing. One of the most robust methods is the GCC (Generalised Cross Correlation) technique as discussed by Knapp and Carter \cite{two} where along with basic cross-correlation, a weighting function is applied to the power spectrum. Among different weighing functions, the most popular one called GCC-PHAT was introduced by Broeck and Bertrand \cite{one}. This weighing scheme was used to achieve unity gain on all frequency components with preservation of phases.  This was designed for locating only single sound source. However it was modified for more critical situations such as multiple sources, described in \cite{three}. The technology of surround sound systems was invented back in 1930s. During the early stages, audio engineers used a procedure called amplitude panning, which allows audio sources like instruments to be placed in different positions to build up a sound scene utilising the panning law, or sometimes to place the source around a listener in the horizontal plane. The technique lacked reproduction of frequency information for different spatial positions. It was then important to understand the working of human ears particularly in the frequency domain. The basic concepts of 3D sound systems are explained in detail by Wenzel \cite{four}. Alongside development in recording technology and signal processing techniques, 3D reproduction of sound was then realized on the basis of HRTFs from source to the right and left ears as discussed by Chong-Jin and Gan \cite{six} and Wenzel \cite{four}. The  robustness  analysis,  localization  characteristics,  structural  model  for  binaural  sound  synthesis  and  head related transfer functions are discussed in detail by Brown and Duda \cite{seven}. All these methods help in reproduction of 3D sound using HRTFs, but not in real-time. There is no emphasis on efficient computation to achieve the same.  
 
 In this paper we discuss the hardware implementation to realise 3D sound effect in real time. We also address methods to efficiently execute time varying FIR filters. This paper is organized into four sections. Section II explains the algorithm which is required to be implemented. Section III describes the implementation details and Section IV analyzes the results obtained from tests and experiments conducted.  
 
 
 \section{Algorithm}
 
-Since convolution of the audio signals with HRTF corresponding to a particular direction makes it seem as if the sound source is placed in that spatial area, it is important to first locate the source. The designed system records samples using microphones separated 20cm apart (approximate distance between the ears) at a standard rate of 44.1 kHz. Filters from one of the most popular databases - CIPIC HRTF database \cite{cipic}, are used to convolve any incoming audio signal. The original filter length of 200 coefficients were downsampled in frequency domain and converted to a 100 tap filter to reduce the number of computations but to preserve the frequency resolution as well .
+Since convolution of the audio signals with HRTF corresponding to a particular direction makes it seem as if the sound source is placed in that spatial area, it is important to first locate the source. The designed system records samples using microphones separated 20cm apart (approximate distance between the ears) at a standard rate of 44.1 kHz. Filters from one of the most popular databases - CIPIC HRTF database \cite{cipic}, are used to convolve any incoming audio signal. The original filter length of 200 coefficients were downsampled in frequency domain and converted to a 100 tap filter to reduce the number of computations but not reduced further to preserve the frequency resolution.
 
 The received audio signals on both the channels \textit{l(t)} and \textit{r(t)} are cross-correlated to estimate the delay or the time difference of arrival of signals. The angle of sound source is then estimated as follows: 
 
@@ -63,7 +63,7 @@ sin\theta = \frac{\tau c}{d}
 \end{equation}
 where c is speed of sound = 343 m/s , d is 20cm, $\theta$ is the azimuthal angle estimated.
 
-Given that the database has 25 different azimuths, using $\theta$ derived, a filter corresponding to the angle closest to is chosen.         
+Given that the database has 25 different azimuths, using $\theta$ derived, a filter corresponding to the closest angle is chosen.         
 
 \section{RTL Design}
 The top level design looks as shown in Fig \ref{fig:top_level}
@@ -109,7 +109,7 @@ This unit cross-correlates data buffers 100 samples long and returns the index o
     \label{fig:modxcorr}
 \end{figure}
 
-Each shift in the computation requires 100 MAC operations, hence with 199 shifts we require 19900 operations to be completed in the time period of 4 data frames = 400 sample periods. This corresponds to having 50 MAC operations per sample period with some idle time in the end. Clock speed required for MAC is at least 50 times faster than sampling rate.
+Each shift in the computation requires 100 MAC operations, hence with 199 shifts we require 19900 operations to be completed in the time period of 4 data frames = 400 sample periods. Clock speed required for MAC is at least 50 times faster than sampling rate. This corresponds to having 50 MAC operations per sample period with 100 clock periods as idle time in the end.
 
 \subsection{Convolution Module}
 Every data frame of 100 samples is convolved with a filter chosen according to the index given by the correlation module. Each output sample is computed by 100 MAC operations, Fig \ref{fig:conv_module}. Even though the correlation module requires only 50 times faster clock speed, but this module requires 100 times faster = 4.41 MHz. 
@@ -121,7 +121,7 @@ Every data frame of 100 samples is convolved with a filter chosen according to t
     \label{fig:conv_module}
 \end{figure}
 
-Not every result of cross-correlated index is mapped to a filter is chosen and convolved, instead past 10 outputs are stored and the filter which is mapped the most number of times is finally chosen, Fig \ref{fig:past10}. This means that there is a possibility of a filter change at every 50$^{th}$ data frame , i.e. at about 110 ms which can account for any change in the position of sound source.
+Not every result of cross-correlated index mapped to a filter is chosen and convolved, instead past 10 outputs are stored and the filter mapped the most number of times is finally chosen, Fig \ref{fig:past10}. This means that there is a possibility of a filter change at every 50$^{th}$ data frame , i.e. at about 110 ms which can account for any change in the position of sound source.
 
 \begin{figure}
     \centering
@@ -132,9 +132,9 @@ Not every result of cross-correlated index is mapped to a filter is chosen and c
 
 \subsection{Convolution during filter change}
 
-For 50 frames of data, a fixed filter is used after which there can be a change in filter. Changing the entire filter buffer with the new set of coefficients would be incorrect since convolution with the previous filter wouldn't have been finished yet. Two convolution units are required at the same time, One - To finish the ongoing convolution process and second - to begin filtering with the new one.
+For 50 frames of data, a fixed filter is used after which there can be a change in filter. Changing the entire filter buffer with the new set of coefficients would be incorrect since convolution with the previous filter would be incomplete. Two convolution units are required at the same time, One - to finish the ongoing convolution process and second - to begin filtering with the new one.
 
-However, this requirement can be avoided by carefully observing the impact of coefficients on the output. We use the \textit{stepwise replacement of impulse response} method as mentioned in \cite{live} but in time domain to give the same result, Fig \ref{fig:coeffupdate}. The coefficients are updated in the filter buffer at the same sampling rate. Primary advantage being that only 1 convolution unit is being used all the time. A register is required to keep storing the previous filter chosen. 
+However, this requirement can be avoided by carefully observing the impact of coefficients on the output. We use the \textit{stepwise replacement of impulse response} method as mentioned in \cite{live} but in time domain to achieve the same result, Fig \ref{fig:coeffupdate}. The coefficients are updated in the filter buffer at the same sampling rate. Primary advantage being that only 1 convolution unit is being used all the time. A register is required to keep storing the previous filter chosen. 
 
 \begin{figure}
     \centering
@@ -144,7 +144,7 @@ However, this requirement can be avoided by carefully observing the impact of co
 \end{figure}
 
 \subsection{Smooth transition}
- To avoid audible glitches during transition, along with the type of convolution explained above it is important to crossfade between the two outputs. This is illustrated in Fig \ref{fig:crossfade}. 
+ To avoid audible glitches during transition, along with the method of convolution explained above it is important to crossfade between the two outputs. This is illustrated in Fig \ref{fig:crossfade}. 
  For $0<n<n_l$
  \begin{equation}
      filter \textunderscore buffer(n) = H(prev)*fade \textunderscore out + H(curr)*fade \textunderscore in
@@ -153,7 +153,7 @@ However, this requirement can be avoided by carefully observing the impact of co
  \begin{equation}
      filter \textunderscore buffer(n) =  H(prev)
  \end{equation}
- where $0<n_l<100$ and increments at sampling rate. 
+ where $0<n_l<100$ increments at sampling rate and \textit{H} contains filter coefficients.
  \begin{figure}
      \centering
      \includegraphics[width = 10cm]{Crossfade.png}
@@ -161,7 +161,7 @@ However, this requirement can be avoided by carefully observing the impact of co
      \label{fig:crossfade}
  \end{figure}
  
- Standard fading techniques such as linear, square-root, sin-cos etc can be used. But it is easier to implement linear fadein/out as no memory is required to store them. They can be dynamically generated , Fig \ref{fig:fadegen}. For fade\textunderscore out initial value = 0x7FFF whereas initial value = 0x0000 for fade\textunderscore in. To completely fade in/out within 100 samples the difference between their adjacent values = 0x014B. 
+ Standard fading techniques such as linear, square-root, sin-cos etc can be used. But it is easier to implement linear fadein/out as no memory is required to store them. They can be dynamically generated , Fig \ref{fig:fadegen}. The inital values for fade\textunderscore out and  fade\textunderscore are 0x7FFF and 0x0000 respectively . To completely fade in/out within 100 samples the difference between their adjacent values = 0x014B. 
  \begin{figure}
      \centering
      \includegraphics[width = \linewidth, height = 2cm]{fade_gen.png}
@@ -171,7 +171,7 @@ However, this requirement can be avoided by carefully observing the impact of co
  
 \section{Implementation Results}
 
-Synthesis of design was done using SCL 0.18 $\mu$m libraries. To verify the functionality of detecting angle of sound source, recorded samples were given as input in the post synthesis simulation of the design. Samples were recorded with National Instruments Data Acquisition device at a sampling rate of 44.1 kHz. The experiment involved placing the sound source at 40$^\circ$ to the right. Fig \ref{fig:right} clearly indicates that the source was placed at an angle corresponding to index 116. Using equation \ref{tdelay} and \ref{angle} this index maps to angle = 38.47$^\circ$ Although the module resulted in other indexes but having a scheme as shown in Fig \ref{fig:past10} helps in minimal acceptance of them. Another experiment involved moving the source continuously from left to center (and vice versa). Fig \ref{fig:left} shows the resulting indexes. The resultant mapping ranges from 30$^\circ$ to the left to center. Apart from central position most of the angles occur equally likely, indicating constant movement. 
+Synthesis of design was done using SCL 0.18 $\mu$m libraries. To verify the functionality of detecting angle of sound source, recorded samples were given as input in the post synthesis simulation of the design. Samples were recorded with National Instruments Data Acquisition device at a sampling rate of 44.1 kHz. The experiment involved placing the sound source at 40$^\circ$ to the right from center of the microphones. Fig \ref{fig:right} clearly indicates that the source was placed at an angle corresponding to index 116. Using equation \ref{tdelay} and \ref{angle} this index maps to angle = 38.47$^\circ$ Although the module resulted in other indexes but having a scheme as shown in Fig \ref{fig:past10} helps in minimal acceptance of them. Another experiment involved moving the source continuously from left to center (and vice versa). Fig \ref{fig:left} shows the resulting indexes. The resultant mapping ranges from 30$^\circ$ to the left to center. Apart from central position most of the angles occur equally likely, indicating constant movement. 
 
 \begin{figure}
     \centering
@@ -187,9 +187,9 @@ Synthesis of design was done using SCL 0.18 $\mu$m libraries. To verify the func
     \label{fig:left}
 \end{figure}
 
-In order to test the design and check its functionality in real time Xilinx Nexys 4 DDR Artix -7 FPGA was used. Initally, experiments were conducted to realise the effect of HRTFs by manually changing the filters. This is also known as panning where the end effect is as if the sound source is moving around user's head. ADMP401 MEMS microphones which are omnidirectional, low power and has a flat frequency response from 100Hz to 15kHz was used as input (analog). Nexys 4 has \textit{XADC}, which is a 12-bit dual channel ADC with 1 MSPS (Mega Samples per Second) which converts the microphone output to a 16-bit digital signal. The output is converted back to its analog equivalent using \textit{PMOD I2S DAC} module which uses the I2S protocol. The resultant output was as expected, periodic change in filter resulted in panning effect.
+In order to test the design and check its functionality in real time Xilinx Nexys 4 DDR Artix -7 FPGA was used. Initally, experiments were conducted to realise the effect of HRTFs by manually changing the filters. This is also known as panning where the end effect is as if the sound source is moving around user's head. ADMP401 MEMS microphones which are omnidirectional, low power and has a flat frequency response from 100Hz to 15kHz was used as input (analog). Nexys 4 has \textit{XADC}, which is a 12-bit dual channel ADC with 1 MSPS (Mega Samples per Second) which converts the microphone output to a 16-bit digital signal. The output is converted back to its analog equivalent using \textit{PMOD I2S DAC} module which uses the I2S protocol. The resultant output was as expected, i.e. periodic change in filter resulted in panning effect.
 
-After checking the functional verification of the HRTFs, the proposed design was implemented which automatically detects the angle of source and chooses the appropriate filter, Fig \ref{fig:setup}.
+After functional verification of HRTFs, the proposed design was implemented to automatically detect the angle of source and accordingly choose the filter, Fig \ref{fig:setup}.
 The resource utilization is given in Table \ref{tab:resourceuti}. Here all the filter coefficients were directly stored in registers, taking up most of the resources. Had there been external memory interfacing the utilized resources would come down.  As expected, the RTL design implemented was able to locate the sound source. The movement of source was accurately tracked and helped in filter selection. Subjecting to listening test, the user was able to realise the 3D sound effect. \newline
 
 
