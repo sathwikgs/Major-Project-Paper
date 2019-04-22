@@ -161,7 +161,7 @@ However, this requirement can be avoided by carefully observing the impact of co
      \label{fig:crossfade}
  \end{figure}
  
- Standard fading techniques such as linear, square-root, sin-cos etc can be used. But it is easier to implement linear fadein/out as no memory is required to store them. They can be dynamically generated , Fig \ref{fig:fadegen}. The inital values for fade\textunderscore out and  fade\textunderscore are 0x7FFF and 0x0000 respectively . To completely fade in/out within 100 samples the difference between their adjacent values = 0x014B. 
+ Standard fading techniques such as linear, square-root, sin-cos can be used. But it is easier to implement linear fadein/out as no memory is required to store them. They can be dynamically generated , Fig \ref{fig:fadegen}. The inital values for fade\textunderscore out and  fade\textunderscore are 0x7FFF and 0x0000 respectively . To completely fade in/out within 100 samples the difference between their adjacent values = 0x014B. 
  \begin{figure}
      \centering
      \includegraphics[width = \linewidth, height = 2cm]{fade_gen.png}
